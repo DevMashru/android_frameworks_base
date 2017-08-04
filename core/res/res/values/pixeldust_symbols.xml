@@ -151,4 +151,6 @@
 
     <java-symbol type="bool" name="config_canForceDozeNotifications" />
 
+<java-symbol type="array" name="config_blockPackagesSensorDrain" />
+
 </resources>
