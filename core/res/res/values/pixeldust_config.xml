@@ -135,4 +135,7 @@
     <!-- Class name of screen off fod handler -->
     <string name="config_fodScreenOffHandlerClass" translatable="false"></string>
 
+    <!-- Screen off delay -->
+    <integer name="config_screen_off_delay">1000</integer>
+
 </resources>
