@@ -63,6 +63,30 @@ LOCAL_REQUIRED_MODULES := \
 	NavigationBarModeGesturalOverlayWideBack \
 	NavigationBarModeGesturalOverlayExtraWideBack
 
+# Custom accents
+LOCAL_REQUIRED_MODULES += \
+	AccentColorYellowOverlay \
+	AccentColorVioletOverlay \
+	AccentColorTealOverlay \
+	AccentColorRedOverlay \
+	AccentColorQGreenOverlay \
+	AccentColorPinkOverlay \
+	AccentColorLightPurpleOverlay \
+	AccentColorIndigoOverlay \
+	AccentColorFlatPinkOverlay \
+	AccentColorCyanOverlay \
+	AccentColorBlueGrayOverlay
+
+# Custom themes
+LOCAL_REQUIRED_MODULES += \
+	SystemPitchBlackOverlay \
+	SystemDarkGrayOverlay \
+	SystemUIDarkGrayOverlay \
+	SystemStyleOverlay \
+	SystemUIStyleOverlay \
+	SystemNightOverlay \
+	SystemUINightOverlay
+
 include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 
