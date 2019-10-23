@@ -96,18 +96,18 @@ public class StatusBarTuner extends PreferenceFragment {
     public boolean onPreferenceTreeClick(Preference preference) {
         if (preference == mShowFourG) {
             boolean checked = ((SwitchPreference)preference).isChecked();
-            Settings.System.putInt(getActivity().getContentResolver(),
-                    Settings.System.SHOW_FOURG, checked ? 1 : 0);
+            Settings.System.putIntForUser(getActivity().getContentResolver(),
+                    Settings.System.SHOW_FOURG, checked ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         } else if (preference == mShowVoLTE) {
             boolean checked = ((SwitchPreference)preference).isChecked();
-            Settings.System.putInt(getActivity().getContentResolver(),
-                    Settings.System.SHOW_VOLTE_ICON, checked ? 1 : 0);
+            Settings.System.putIntForUser(getActivity().getContentResolver(),
+                    Settings.System.SHOW_VOLTE_ICON, checked ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         } else if (preference == mShowDataDisabled) {
             boolean checked = ((SwitchPreference)preference).isChecked();
-            Settings.System.putInt(getActivity().getContentResolver(),
-                    Settings.System.DATA_DISABLED_ICON, checked ? 1 : 0);
+            Settings.System.putIntForUser(getActivity().getContentResolver(),
+                    Settings.System.DATA_DISABLED_ICON, checked ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
         return super.onPreferenceTreeClick(preference);
