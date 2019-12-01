@@ -184,4 +184,5 @@ oneway interface IStatusBar
      */
     void toggleCameraFlash();
     void killForegroundApp();
+    void setPartialScreenshot(boolean active);
 }

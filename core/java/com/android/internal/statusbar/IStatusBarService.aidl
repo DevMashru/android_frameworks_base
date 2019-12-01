@@ -130,4 +130,5 @@ interface IStatusBarService
     void setBlockedGesturalNavigation(boolean blocked);
 
     void killForegroundApp();
+    void setPartialScreenshot(boolean active);
 }
