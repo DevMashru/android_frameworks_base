@@ -68,5 +68,9 @@
     <color name="quick_settings_theme_tile_xboxgreen">#107C10</color>
     <color name="quick_settings_theme_tile_xiaomiorange">#ff6700</color>
 
+    <!-- Color of the FOD view -->
+    <color name="config_fodColor">#00ff00</color>
+    <color name="config_fodColorBackground">#20000000</color>
+
 </resources>
 
