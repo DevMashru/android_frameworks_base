@@ -35,6 +35,7 @@ import android.hardware.biometrics.BiometricSourceType;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.Display;
 import android.view.Gravity;
@@ -424,6 +425,8 @@ public class FODCircleView extends ImageView implements ConfigurationListener {
         }
 
         mIsShowing = true;
+
+        updatePosition();
 
         dispatchShow();
         setVisibility(View.VISIBLE);
