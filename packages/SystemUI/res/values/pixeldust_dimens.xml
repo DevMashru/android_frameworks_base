@@ -70,5 +70,8 @@
     <!-- Padding after battery level text in status bar, QS, and Keyguard -->
     <dimen name="battery_level_padding_end">2dp</dimen>
 
+    <!-- Size of the FOD animation -->
+    <dimen name="fod_animation_size">280dp</dimen>
+
 </resources>
 
