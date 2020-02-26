@@ -79,6 +79,7 @@ android_library {
         "jsr330",
         "airbnb-lottie",
         "vendor.lineage.biometrics.fingerprint.inscreen-V1.0-java",
+        "VendorSupport-preference",
     ],
     manifest: "AndroidManifest.xml",
     additional_manifests: ["PixelDustManifest.xml"],
