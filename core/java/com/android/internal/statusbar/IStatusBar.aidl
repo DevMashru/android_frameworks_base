@@ -183,4 +183,5 @@ oneway interface IStatusBar
      * Pixeldust extensions
      */
     void toggleCameraFlash();
+    void killForegroundApp();
 }
