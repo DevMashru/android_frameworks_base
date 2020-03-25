@@ -78,6 +78,8 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.IllegalFormatConversionException;
 
+import com.android.internal.util.pixeldust.PixeldustUtils;
+
 import vendor.lineage.biometrics.fingerprint.inscreen.V1_0.IFingerprintInscreen;
 
 /**
@@ -719,8 +721,9 @@ public class KeyguardIndicationController implements StateListener,
                         String.format("%.1f", (mChargingVoltage / 1000 / 1000)) + "V";
             }
             if (mTemperature > 0) {
-                batteryInfo = (batteryInfo == "" ? "" : batteryInfo + " · ") +
-                        mTemperature / 10 + "°C";
+                String batteryTemp = PixeldustUtils.mccCheck(mContext) ?
+                          mTemperature * 9 / 50 + 32 + "°F" : mTemperature / 10 + "°C";
+                batteryInfo = (batteryInfo == "" ? "" : batteryInfo + " · ") + batteryTemp;
             }
             if (batteryInfo != "") {
                 batteryInfo = "\n" + batteryInfo;
