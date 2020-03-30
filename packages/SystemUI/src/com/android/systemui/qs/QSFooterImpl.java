@@ -40,6 +40,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,24 +59,35 @@ import com.android.systemui.R;
 import com.android.systemui.R.dimen;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.qs.TouchAnimator.Builder;
+import com.android.systemui.settings.BrightnessController;
+import com.android.systemui.settings.ToggleSliderView;
 import com.android.systemui.statusbar.phone.MultiUserSwitch;
 import com.android.systemui.statusbar.phone.SettingsButton;
+import com.android.systemui.statusbar.policy.BrightnessMirrorController;
+import com.android.systemui.statusbar.policy.BrightnessMirrorController.BrightnessMirrorListener;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserInfoController.OnUserInfoChangedListener;
 import com.android.systemui.tuner.TunerService;
+import com.android.systemui.tuner.TunerService.Tunable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 public class QSFooterImpl extends FrameLayout implements QSFooter,
-        OnClickListener, OnLongClickListener, OnUserInfoChangedListener {
+        OnClickListener, OnLongClickListener, OnUserInfoChangedListener,
+                BrightnessMirrorListener, Tunable {
+
+    public static final String QS_SHOW_BRIGHTNESS = "qs_show_brightness";
+    public static final String QS_BRIGHTNESS_POSITION_BOTTOM = "qs_brightness_position_bottom";
 
     private static final String TAG = "QSFooterImpl";
 
     private final ActivityStarter mActivityStarter;
     private final UserInfoController mUserInfoController;
     private final DeviceProvisionedController mDeviceProvisionedController;
+    private View mBrightnessView;
+    private ImageButton mBrightnessIcon;
     private SettingsButton mSettingsButton;
     protected View mSettingsContainer;
     private PageIndicator mPageIndicator;
@@ -97,11 +109,17 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     protected View mEdit;
     protected View mEditContainer;
     private TouchAnimator mSettingsCogAnimator;
+    private TouchAnimator mBrightnessAnimator;
+
+    private BrightnessController mBrightnessController;
+    private BrightnessMirrorController mBrightnessMirrorController;
 
     private View mActionsContainer;
     private View mDragHandle;
 
     private OnClickListener mExpandClickListener;
+
+    private boolean mBrightnessVisible;
 
     /*private final ContentObserver mDeveloperSettingsObserver = new ContentObserver(
             new Handler(mContext.getMainLooper())) {
@@ -140,6 +158,11 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
         mPageIndicator = findViewById(R.id.footer_page_indicator);
 
+        mBrightnessView = findViewById(R.id.brightness_slider_view);
+        mBrightnessView.setVisibility(View.VISIBLE);
+
+        mBrightnessIcon = findViewById(R.id.brightness_icon);
+
         mSettingsButton = findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
@@ -155,6 +178,10 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         // RenderThread is doing more harm than good when touching the header (to expand quick
         // settings), so disable it for this view
         ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
+
+        mBrightnessController = new BrightnessController(getContext(),
+                mBrightnessIcon,
+                findViewById(R.id.brightness_slider));
 
         updateResources();
 
@@ -179,9 +206,47 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         }*/
     }
 
+    public void setBrightnessListening() {
+        if (mListening) {
+            mBrightnessController.registerCallbacks();
+        } else {
+            mBrightnessController.unregisterCallbacks();
+        }
+    }
+
+    @Override
+    public void onBrightnessMirrorReinflated(View brightnessMirror) {
+        updateBrightnessMirror();
+    }
+
+    public void updateBrightnessMirror() {
+        if (mBrightnessMirrorController != null) {
+            ToggleSliderView brightnessSlider = findViewById(R.id.brightness_slider);
+            ToggleSliderView mirrorSlider = mBrightnessMirrorController.getMirror()
+                    .findViewById(R.id.brightness_slider);
+            brightnessSlider.setMirror(mirrorSlider);
+            brightnessSlider.setMirrorController(mBrightnessMirrorController);
+        }
+    }
+
     private void updateAnimator(int width) {
+        int bottomMargin = mContext.getResources()
+                .getDimensionPixelOffset(R.dimen.qs_footer_brightness_translation);
+        float iconSize = mBrightnessIcon.getWidth();
+
         mSettingsCogAnimator = new Builder()
                 .addFloat(mSettingsButton, "rotation", -120, 0)
+                .build();
+
+        mBrightnessAnimator = new Builder()
+                .addFloat(mBrightnessView, "translationY", bottomMargin, 0)
+                .addFloat(findViewById(R.id.brightness_slider), "translationX", isLayoutRtl()
+                        ? -iconSize/2 : iconSize/2, 0)
+                .addFloat(mBrightnessMirrorController.getMirror().findViewById(R.id.brightness_slider),
+                        "translationX", isLayoutRtl() ? -iconSize/2 : iconSize/2, 0)
+                .addFloat(mBrightnessView.findViewById(R.id.brightness_right), "translationX", isLayoutRtl() ? -iconSize : iconSize, 0)
+                .addFloat(mBrightnessIcon, "translationX", isLayoutRtl() ? -iconSize : iconSize, 0)
+                .addFloat(mBrightnessIcon, "rotation", 120, 0)
                 .build();
 
         setExpansion(mExpansionAmount);
@@ -214,6 +279,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                 .addFloat(mMultiUserAvatar, "alpha", 0, 1)
                 .addFloat(mEditContainer, "alpha", 0, 1)
                 .addFloat(mDragHandle, "alpha", 1, 0, 0)
+                .addFloat(mBrightnessIcon, "alpha", 0, 1)
                 .addFloat(mPageIndicator, "alpha", 0, 1)
                 .setStartDelay(0.15f)
                 .build();
@@ -233,12 +299,17 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     public void setExpanded(boolean expanded) {
         if (mExpanded == expanded) return;
         mExpanded = expanded;
+        if (mBrightnessMirrorController != null) {
+            mBrightnessMirrorController.setExpanded(expanded);
+        }
         updateEverything();
     }
 
     @Override
     public void setExpansion(float headerExpansionFraction) {
         mExpansionAmount = headerExpansionFraction;
+        if (mBrightnessAnimator != null) mBrightnessAnimator.setPosition(headerExpansionFraction);
+
         if (mSettingsCogAnimator != null) mSettingsCogAnimator.setPosition(headerExpansionFraction);
 
         if (mFooterAnimator != null) {
@@ -249,6 +320,13 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        final TunerService tunerService = Dependency.get(TunerService.class);
+        tunerService.addTunable(this, QS_SHOW_BRIGHTNESS);
+        tunerService.addTunable(this, QS_BRIGHTNESS_POSITION_BOTTOM);
+
+        if (mBrightnessMirrorController != null) {
+            mBrightnessMirrorController.addCallback(this);
+        }
         /*mContext.getContentResolver().registerContentObserver(
                 Settings.Global.getUriFor(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED), false,
                 mDeveloperSettingsObserver, UserHandle.USER_ALL);*/
@@ -257,7 +335,11 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     @Override
     @VisibleForTesting
     public void onDetachedFromWindow() {
+        Dependency.get(TunerService.class).removeTunable(this);
         setListening(false);
+        if (mBrightnessMirrorController != null) {
+            mBrightnessMirrorController.removeCallback(this);
+        }
         //mContext.getContentResolver().unregisterContentObserver(mDeveloperSettingsObserver);
         super.onDetachedFromWindow();
     }
@@ -296,6 +378,31 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         updateEverything();
     }
 
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        if (QS_SHOW_BRIGHTNESS.equals(key)) {
+            boolean visible = TunerService.parseIntegerSwitch(newValue, true);
+            if (visible) {
+                if (!mBrightnessVisible) {
+                    mBrightnessView.setVisibility(View.GONE);
+                } else {
+                    mBrightnessView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                mBrightnessView.setVisibility(View.GONE);
+            }
+        }
+        if (QS_BRIGHTNESS_POSITION_BOTTOM.equals(key)) {
+            if (newValue == null || Integer.parseInt(newValue) == 0) {
+                mBrightnessView.setVisibility(View.GONE);
+                mBrightnessVisible = false;
+            } else {
+                mBrightnessView.setVisibility(View.VISIBLE);
+                mBrightnessVisible = true;
+            }
+        }
+    }
+
     public void updateEverything() {
         post(() -> {
             updateVisibilities();
@@ -328,6 +435,18 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         } else {
             mUserInfoController.removeCallback(this);
         }
+        setBrightnessListening();
+    }
+
+    public void setBrightnessMirror(BrightnessMirrorController c) {
+        if (mBrightnessMirrorController != null) {
+            mBrightnessMirrorController.removeCallback(this);
+        }
+        mBrightnessMirrorController = c;
+        if (mBrightnessMirrorController != null) {
+            mBrightnessMirrorController.addCallback(this);
+        }
+        updateBrightnessMirror();
     }
 
     @Override

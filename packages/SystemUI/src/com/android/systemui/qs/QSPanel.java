@@ -302,23 +302,12 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
                 removeView(mBrightnessView);
                 mBrightnessPlaceholder.setLayoutParams(new LayoutParams(0, 16));
                 mBrightnessPlaceholder.setVisibility(View.VISIBLE);
-                addView(mBrightnessView, getBrightnessViewPositionBottom());
                 mBrightnessBottom = true;
             }
         }
         if (QS_SHOW_SECURITY.equals(key)) {
             mFooter.setForceHide(newValue != null && Integer.parseInt(newValue) == 0);
         }
-    }
-
-    private int getBrightnessViewPositionBottom() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View v = getChildAt(i);
-            if (v == mDivider) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     private void updateViewVisibilityForTuningValue(@Nullable String newValue) {
