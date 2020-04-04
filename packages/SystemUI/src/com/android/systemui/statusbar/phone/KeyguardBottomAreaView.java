@@ -74,6 +74,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
+import com.android.systemui.biometrics.FODCircleView;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.IntentButtonProvider;
 import com.android.systemui.plugins.IntentButtonProvider.IntentButton;
@@ -119,6 +120,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     protected static final Intent PHONE_INTENT = new Intent(Intent.ACTION_DIAL);
     private static final int DOZE_ANIMATION_STAGGER_DELAY = 48;
     private static final int DOZE_ANIMATION_ELEMENT_DURATION = 250;
+    private static final String FOD = "vendor.lineage.biometrics.fingerprint.inscreen";
 
     private EmergencyCarrierArea mEmergencyCarrierArea;
     private KeyguardAffordanceView mRightAffordanceView;
@@ -432,8 +434,8 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     }
 
     private boolean hasInDisplayFingerprint() {
-        return mContext.getResources().getBoolean(
-               com.android.internal.R.bool.config_needCustomFODView)  && mIsFingerprintRunning;
+        return mContext.getPackageManager().hasSystemFeature(FOD) && mIsFingerprintRunning &&
+                   FODCircleView.canUnlockWithFp(KeyguardUpdateMonitor.getInstance(mContext));
     }
 
     public boolean isLeftVoiceAssist() {
