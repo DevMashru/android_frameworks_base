@@ -5383,6 +5383,32 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
 
         /**
+         * Whether to display QS brightness slider
+         * @hide
+         */
+        public static final String QS_SHOW_BRIGHTNESS = "qs_show_brightness";
+        /** @hide */
+        private static final Validator QS_SHOW_BRIGHTNESS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to display QS brightness slider on bottom
+         * @hide
+         */
+        public static final String QS_BRIGHTNESS_POSITION_BOTTOM = "qs_brightness_position_bottom";
+        /** @hide */
+        private static final Validator QS_BRIGHTNESS_POSITION_BOTTOM_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to display QS security footer
+         * @hide
+         */
+        public static final String QS_SHOW_SECURITY = "qs_show_security";
+        /** @hide */
+        private static final Validator QS_SHOW_SECURITY_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Whether to show Brightness Icon On Brightness Slider
          * @hide
          */
@@ -6053,6 +6079,9 @@ public final class Settings {
             PULSE_AMBIENT_LIGHT_DURATION,
             PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL,
             CLOCK_SHOW_STATUS_AREA,
+            QS_SHOW_BRIGHTNESS,
+            QS_BRIGHTNESS_POSITION_BOTTOM,
+            QS_SHOW_SECURITY,
             QS_SHOW_BRIGHTNESS_ICON,
             QS_SHOW_BRIGHTNESS_MINMAX,
             NAVIGATION_BAR_ARROW_KEYS,
@@ -6468,6 +6497,9 @@ public final class Settings {
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_DURATION, PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL, PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL_VALIDATOR);
             VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_BRIGHTNESS, QS_SHOW_BRIGHTNESS_VALIDATOR);
+            VALIDATORS.put(QS_BRIGHTNESS_POSITION_BOTTOM, QS_BRIGHTNESS_POSITION_BOTTOM_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_SECURITY, QS_SHOW_SECURITY_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_ICON, QS_SHOW_BRIGHTNESS_ICON_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_MINMAX, QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR);
             VALIDATORS.put(NAVIGATION_BAR_ARROW_KEYS, NAVIGATION_BAR_ARROW_KEYS_VALIDATOR);
