@@ -265,7 +265,6 @@ public class QSAnimator implements Callback, PageListener, Listener, OnLayoutCha
             count++;
         }
         View brightness = mQsPanel.getBrightnessView();
-        View brightnessPlaceholder = mQsPanel.getBrightnessPlaceholder();
         if (mAllowFancy) {
             mFirstPageAnimator = firstPageBuilder
                     .setListener(this)
@@ -279,10 +278,8 @@ public class QSAnimator implements Callback, PageListener, Listener, OnLayoutCha
             mAllViews.add(mQsPanel.getDivider());
             mAllViews.add(mQsPanel.getFooter().getView());
             if (brightness != null && mQsPanel.isBrightnessViewBottom()) {
-                firstPageBuilder.addFloat(brightnessPlaceholder, "translationY", heightDiff, 0);
-                animationBuilder.addFloat(brightness, "alpha", 0, 1);
                 mAllViews.add(brightness);
-                mAllViews.add(brightnessPlaceholder);
+                animationBuilder.addFloat(brightness, "alpha", 0, 1);
             }
             mFirstPageDelayedAnimator = animationBuilder.build();
             float px = 0;

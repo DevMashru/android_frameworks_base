@@ -109,8 +109,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     private View mDivider;
 
     private boolean mBrightnessBottom;
-    private boolean mBrightnessVisible;
-    private View mBrightnessPlaceholder;
 
     private final Vibrator mVibrator;
 
@@ -139,10 +137,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
 
         mBrightnessView = LayoutInflater.from(mContext).inflate(
             R.layout.quick_settings_brightness_dialog, this, false);
-        mBrightnessPlaceholder = LayoutInflater.from(mContext).inflate(
-            R.layout.quick_settings_brightness_placeholder, this, false);
         mBrightnessIcon = mBrightnessView.findViewById(R.id.brightness_icon);
-        addView(mBrightnessPlaceholder);
         addView(mBrightnessView);
 
         mTileLayout = (QSTileLayout) LayoutInflater.from(mContext).inflate(
@@ -290,18 +285,15 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     @Override
     public void onTuningChanged(String key, String newValue) {
         if (QS_SHOW_BRIGHTNESS.equals(key)) {
-            updateViewVisibilityForTuningValue(newValue);
+            updateViewVisibilityForTuningValue(mBrightnessView, newValue);
         }
         if (QS_BRIGHTNESS_POSITION_BOTTOM.equals(key)) {
             if (newValue == null || Integer.parseInt(newValue) == 0) {
                 removeView(mBrightnessView);
-                mBrightnessPlaceholder.setVisibility(View.GONE);
                 addView(mBrightnessView, 0);
                 mBrightnessBottom = false;
             } else {
                 removeView(mBrightnessView);
-                mBrightnessPlaceholder.setLayoutParams(new LayoutParams(0, 16));
-                mBrightnessPlaceholder.setVisibility(View.VISIBLE);
                 mBrightnessBottom = true;
             }
         }
@@ -310,21 +302,8 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         }
     }
 
-    private void updateViewVisibilityForTuningValue(@Nullable String newValue) {
-        boolean visible = TunerService.parseIntegerSwitch(newValue, true);
-        if (visible) {
-            mBrightnessVisible = true;
-            mBrightnessView.setVisibility(VISIBLE);
-            if (!mBrightnessBottom) {
-                mBrightnessPlaceholder.setVisibility(View.GONE);
-            } else {
-                mBrightnessPlaceholder.setVisibility(View.VISIBLE);
-            }
-        } else {
-            mBrightnessVisible = false;
-            mBrightnessView.setVisibility(GONE);
-            mBrightnessPlaceholder.setVisibility(View.VISIBLE);
-        }
+    private void updateViewVisibilityForTuningValue(View view, @Nullable String newValue) {
+        view.setVisibility(TunerService.parseIntegerSwitch(newValue, true) ? VISIBLE : GONE);
     }
 
     public void openDetails(String subPanel) {
@@ -382,10 +361,6 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
 
     View getBrightnessView() {
         return mBrightnessView;
-    }
-
-    View getBrightnessPlaceholder() {
-        return mBrightnessPlaceholder;
     }
 
     public void setCallback(QSDetail.Callback callback) {
