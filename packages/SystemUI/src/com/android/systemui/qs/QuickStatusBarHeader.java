@@ -171,7 +171,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                     .getUriFor(Settings.System.SHOW_QS_CLOCK), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.Secure
-                    .getUriFor(Settings.Secure.QS_BRIGHTNESS_POSITION_BOTTOM), false,
+                    .getUriFor(Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM), false,
                     this, UserHandle.USER_ALL);
             }
 
@@ -480,8 +480,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     }
 
     private int getQQSTotalHeight() {
-        boolean showBottom = Settings.Secure.getInt(mContext.getContentResolver(),
-        Settings.Secure.QS_BRIGHTNESS_POSITION_BOTTOM, 0) != 0;
+        boolean showBottom = Settings.System.getInt(mContext.getContentResolver(),
+        Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM, 0) != 0;
         int result = Math.max(getMinimumHeight(),
                 getResources().getDimensionPixelSize(
                         com.android.internal.R.dimen.quick_qs_total_height));
