@@ -170,6 +170,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.SHOW_QS_CLOCK), false,
                     this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure
+                    .getUriFor(Settings.Secure.QS_BRIGHTNESS_POSITION_BOTTOM), false,
+                    this, UserHandle.USER_ALL);
             }
 
         @Override
@@ -430,9 +433,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             lp.height = resources.getDimensionPixelSize(
                     com.android.internal.R.dimen.quick_qs_offset_height);
         } else {
-            lp.height = Math.max(getMinimumHeight(),
-                    resources.getDimensionPixelSize(
-                            com.android.internal.R.dimen.quick_qs_total_height));
+            lp.height = getQQSTotalHeight(); // quick_qs_total_height
         }
 
         setLayoutParams(lp);
@@ -476,6 +477,19 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         int show = Settings.System.getInt(mContext.getContentResolver(),
         Settings.System.SHOW_QS_CLOCK, 1);
         mClockView.setClockVisibleByUser(show == 1);
+    }
+
+    private int getQQSTotalHeight() {
+        boolean showBottom = Settings.Secure.getInt(mContext.getContentResolver(),
+        Settings.Secure.QS_BRIGHTNESS_POSITION_BOTTOM, 0) != 0;
+        int result = Math.max(getMinimumHeight(),
+                getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.quick_qs_total_height));
+        if (showBottom) {
+            return result;
+        } else {
+            return result - 34;
+        }
     }
 
     private void updateStatusIconAlphaAnimator() {
