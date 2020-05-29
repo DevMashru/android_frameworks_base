@@ -488,7 +488,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         if (showBottom) {
             return result;
         } else {
-            return result - 34;
+            return result; //+ 24;
         }
     }
 

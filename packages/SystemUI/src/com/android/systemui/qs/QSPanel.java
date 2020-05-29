@@ -291,6 +291,12 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
             View child = getChildAt(i);
             if (child.getVisibility() != View.GONE) height += child.getMeasuredHeight();
         }
+        boolean showBottom = Settings.System.getInt(mContext.getContentResolver(),
+        Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM, 0) != 0;
+        if (!showBottom) {
+            height -= 52;
+        }
+
         setMeasuredDimension(getMeasuredWidth(), height);
     }
 
